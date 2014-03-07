@@ -1,6 +1,8 @@
 
-SRCS = main.c
-OBJS = $(patsubst %.c, %.o, $(SRCS))
+SRCS = main.c bootstrap.s
+OBJS = $(patsubst %.c, %.o, $(filter %.c, $(SRCS)))
+OBJS += $(patsubst %.s, %.o, $(filter %.s, $(SRCS)))
+
 TARGET = kernel.bin
 
 CROSS_COMPILE = arm-none-eabi
@@ -16,7 +18,7 @@ LDFLAGS = -N -Ttext=0x10000
 all : $(OBJS)
 	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET)
 
-%.o : %.c
+%.o : %.c %.s
 	$(CC) $(CFLAGS) -c $<
 
 qemu : all
