@@ -30,7 +30,7 @@ all : $(OBJS)
 	$(CC) $(CFLAGS) -c $<
 
 qemu : all
-	qemu-system-arm -M versatilepb -cpu arm1176  -kernel $(TARGET).bin
+	qemu-system-arm -M versatilepb -cpu arm1176 -nographic  -kernel $(TARGET).bin
 
 clean:
 	$(RM) -rf $(OBJS) $(TARGET).elf $(TARGET).hex $(TARGET).bin
