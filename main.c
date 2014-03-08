@@ -1,12 +1,18 @@
 
+#include "versatilepb.h"
+
+void bwputs(char *s)
+{
+	while(*s) {
+		while (*(UART0 + UARTFR) & UARTFR_TXFF);
+		*UART0 = *s;
+		s++;
+	}
+}
 
 int main ()
 {
-	char *str = "Hello, World!\n";
-	while(*str) {
-		*(volatile char *) 0x101f1000 = *str;
-		str++;
-	}
+	bwputs("Hello, World!\n");
 
 	/* Prevent for exit */
 	while(1);
