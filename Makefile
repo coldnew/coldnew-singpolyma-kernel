@@ -1,9 +1,9 @@
 
-SRCS = main.c bootstrap.s
+SRCS = main.c bootstrap.s context_switch.s
 OBJS = $(patsubst %.c, %.o, $(filter %.c, $(SRCS)))
 OBJS += $(patsubst %.s, %.o, $(filter %.s, $(SRCS)))
 
-TARGET = kernel
+TARGET = kernel.elf
 
 CROSS_COMPILE = arm-none-eabi
 
@@ -16,21 +16,18 @@ OBJDUMP = $(CROSS_COMPILE)-objdump
 SIZE = $(CROSS_COMPILE)-size
 
 CFLAGS = -march=armv6 -msoft-float
-CFLAGS += -Os -Wall -Wall -Wextra -fPIC -nostartfiles
+CFLAGS += -Os -Wall -Wall -Wextra -fPIC -nostartfiles -marm
 LDFLAGS = -N -Ttext=0x10000
 
 all : $(OBJS)
-	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET).elf
-	$(OBJCOPY) -O ihex $(TARGET).elf $(TARGET).hex
-	$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
-	@echo "----------" $(TARGET).elf " info ----------"
-	$(SIZE) $(TARGET).elf
+	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
+	$(SIZE) $(TARGET)
 
 %.o : %.c %.s
 	$(CC) $(CFLAGS) -c $<
 
 qemu : all
-	qemu-system-arm -M versatilepb -cpu arm1176 -nographic  -kernel $(TARGET).bin
+	qemu-system-arm -M versatilepb -cpu arm1176 -nographic  -kernel $(TARGET)
 
 clean:
-	$(RM) -rf $(OBJS) $(TARGET).elf $(TARGET).hex $(TARGET).bin
+	$(RM) -rf $(OBJS) $(TARGET)

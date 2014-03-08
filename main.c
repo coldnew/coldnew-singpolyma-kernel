@@ -1,5 +1,6 @@
 
 #include "versatilepb.h"
+#include "asm.h"
 
 void bwputs(char *s)
 {
@@ -10,12 +11,18 @@ void bwputs(char *s)
 	}
 }
 
+void first()
+{
+	bwputs("In user mode\n");
+	while (1);
+}
+
 int main ()
 {
-	bwputs("Hello, World!\n");
+	bwputs("Starting kernel!\n");
+	activate();
 
 	/* Prevent for exit */
 	while(1);
-
 	return 0;
 }
